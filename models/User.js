@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema(
         },
         avatar: {
             type: String,
-            default: '/images/default-avatar.png',
+            default: process.env.DEFAULT_AVATAR,
         },
         bio: {
             type: String,
@@ -43,6 +43,19 @@ const UserSchema = new mongoose.Schema(
         otpExpiry: {
             type: Number,
         },
+        followers: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+            },
+        ],
+
+        following: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+            },
+        ],
     },
     { timestamps: true }
 )

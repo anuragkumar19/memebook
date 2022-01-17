@@ -47,3 +47,11 @@ export const updatePasswordSchema = Joi.object({
     oldPassword: Joi.string().required(),
     newPassword: Joi.string().required().min(6),
 })
+
+export const postSchema = Joi.object({
+    caption: Joi.string().trim(),
+})
+
+export const commentSchema = Joi.object({
+    text: Joi.string().trim().required().min(1).max(200),
+})
