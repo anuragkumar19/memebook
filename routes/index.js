@@ -1,8 +1,8 @@
 import { Router } from 'express'
 import authRouter from './auth.js'
-import userRouter from './user.js'
-import postRouter from './post.js'
 import commentRouter from './comment.js'
+import postRouter from './post.js'
+import userRouter from './user.js'
 
 const router = Router()
 
