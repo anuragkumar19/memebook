@@ -47,6 +47,16 @@ export const getSiglePost = asyncHandler(async (req, res) => {
 export const getPostComment = asyncHandler(async (req, res) => {
     const post = await Post.findById(req.params.id)
 
+    let { page, limit } = req.query
+
+    if (!page) {
+        page = 1
+    }
+
+    if (!limit) {
+        limit = 20
+    }
+
     if (!post) {
         res.status(404)
         throw new Error('Post not found')
@@ -54,9 +64,16 @@ export const getPostComment = asyncHandler(async (req, res) => {
 
     const comments = await Comment.find({
         post: post._id,
-    }).populate('user', 'name username avatar')
+    })
+        .populate('user', 'name username avatar')
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .sort('-createdAt')
 
-    res.json({ comments: comments.map((comment) => parseComment(comment)) })
+    res.json({
+        count: comments.length,
+        comments: comments.map((comment) => parseComment(comment)),
+    })
 })
 
 export const updatePost = asyncHandler(async (req, res) => {
