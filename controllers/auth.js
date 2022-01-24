@@ -105,25 +105,25 @@ export const logIn = asyncHandler(async (req, res) => {
 })
 
 export const refreshToken = asyncHandler(async (req, res) => {
-    const token = req.header('Authorization')
+    const token = req.body.refreshToken
 
     if (!token) {
         res.status(401)
         throw new Error('No token provided')
     }
 
-    const refreshToken = token.split(' ')[1]
+    if (typeof token !== 'string') {
+        res.status(401)
+        throw new Error('Invalid token')
+    }
 
-    if (!refreshToken) {
+    if (!token) {
         res.status(401)
         throw new Error('Invalid token')
     }
 
     try {
-        const decoded = jwt.verify(
-            refreshToken,
-            process.env.REFRESH_TOKEN_SECRET
-        )
+        const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET)
         const user = await User.findById(decoded._id)
 
         if (!user) {
@@ -132,7 +132,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
         }
 
         const accessToken = user.generateAccessToken()
-        res.json({ accessToken })
+        res.json({ tokens: { accessToken } })
     } catch (err) {
         res.status(401)
         console.log(err)
