@@ -6,12 +6,12 @@ import { parsePost, parseUser } from '../utils/parser.js'
 export const getLoggedInUser = asyncHandler(async (req, res) => {
     const user = req.user
 
-    user.password = undefined
-    user.otp = undefined
-    user.otpExpiry = undefined
-
     res.status(200).json({
-        user,
+        user: {
+            ...parseUser(user),
+            postsCount: await Post.countDocuments({ user: user._id }),
+            email: user.email,
+        },
     })
 })
 
@@ -120,8 +120,18 @@ export const getUserByUsername = asyncHandler(async (req, res) => {
         throw new Error('User not found')
     }
 
+    if (!user.isEmailVerified) {
+        res.status(404)
+        throw new Error('User not found')
+    }
+
     res.status(200).json({
-        user: parseUser(user),
+        user: {
+            ...parseUser(user),
+            postsCount: await Post.countDocuments({ user: user._id }),
+            isFollowing: req.user.following.includes(user._id),
+            isFollower: req.user.followers.includes(user._id),
+        },
     })
 })
 
@@ -131,6 +141,11 @@ export const getPostOfUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ username })
 
     if (!user) {
+        res.status(404)
+        throw new Error('User not found')
+    }
+
+    if (!user.isEmailVerified) {
         res.status(404)
         throw new Error('User not found')
     }
@@ -159,6 +174,11 @@ export const getFollowers = asyncHandler(async (req, res) => {
         throw new Error('User not found')
     }
 
+    if (!user.isEmailVerified) {
+        res.status(404)
+        throw new Error('User not found')
+    }
+
     res.status(200).json({
         followers: user.followers,
     })
@@ -177,6 +197,11 @@ export const getFollowing = asyncHandler(async (req, res) => {
         throw new Error('User not found')
     }
 
+    if (!user.isEmailVerified) {
+        res.status(404)
+        throw new Error('User not found')
+    }
+
     res.status(200).json({
         following: user.following,
     })
@@ -188,6 +213,11 @@ export const follow = asyncHandler(async (req, res) => {
     const user = await User.findOne({ username })
 
     if (!user) {
+        res.status(404)
+        throw new Error('User not found')
+    }
+
+    if (!user.isEmailVerified) {
         res.status(404)
         throw new Error('User not found')
     }
@@ -227,6 +257,11 @@ export const unfollow = asyncHandler(async (req, res) => {
         throw new Error('User not found')
     }
 
+    if (!user.isEmailVerified) {
+        res.status(404)
+        throw new Error('User not found')
+    }
+
     const follower = req.user
 
     if (!follower.following.includes(user._id)) {
@@ -261,8 +296,8 @@ export const searchUser = asyncHandler(async (req, res) => {
 
     const users = await User.find({
         $or: [
-            { username: { $regex: q, $options: 'i' } },
-            { name: { $regex: q, $options: 'i' } },
+            { username: { $regex: q, $options: 'i' }, isEmailVerified: true },
+            { name: { $regex: q, $options: 'i' }, isEmailVerified: true },
         ],
     })
         .select('name username avatar')
