@@ -8,6 +8,7 @@ import {
     getUserByUsername,
     searchUser,
     unfollow,
+    updateAvatar,
     updateBio,
     updateName,
     updatePassword,
@@ -43,7 +44,7 @@ router.put('/username', updateUsername)
 
 router.put('/password', validate(updatePasswordSchema), updatePassword)
 
-router.put('/avatar', upload('image', 'avatar', false))
+router.put('/avatar', upload('image', 'avatar', false), updateAvatar)
 
 router.get('/:username', getUserByUsername)
 
