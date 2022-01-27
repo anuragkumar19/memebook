@@ -150,9 +150,23 @@ export const getPostOfUser = asyncHandler(async (req, res) => {
         throw new Error('User not found')
     }
 
+    let { page, limit } = req.query
+
+    if (!page) {
+        page = 1
+    }
+
+    if (!limit) {
+        limit = 6
+    }
+
     const posts = await Post.find({
         user: user._id,
-    }).populate('user', 'name username avatar')
+    })
+        .populate('user', 'name username avatar')
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .sort('-createdAt')
 
     const sendablePosts = posts.map((post) => parsePost(post))
 
