@@ -13,7 +13,7 @@ export const parseUser = (user) => {
     }
 }
 
-export const parsePost = (post) => {
+export const parsePost = (post, user) => {
     return {
         _id: post._id,
         user: post.user,
@@ -24,10 +24,12 @@ export const parsePost = (post) => {
         comments: post.comments.length,
         createdAt: post.createdAt,
         updatedAt: post.updatedAt,
+        isLiked: post.likes.includes(user._id),
+        isSaved: user.savedPosts.includes(post._id),
     }
 }
 
-export const parseComment = (comment) => {
+export const parseComment = (comment, user) => {
     return {
         _id: comment._id,
         user: comment.user,
@@ -36,5 +38,6 @@ export const parseComment = (comment) => {
         likes: comment.likes.length,
         createdAt: comment.createdAt,
         updatedAt: comment.updatedAt,
+        isLiked: comment.likes.includes(user._id),
     }
 }

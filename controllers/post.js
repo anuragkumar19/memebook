@@ -41,7 +41,9 @@ export const getSiglePost = asyncHandler(async (req, res) => {
         throw new Error('Post not found')
     }
 
-    res.json({ post: parsePost(post) })
+    res.json({
+        post: parsePost(post, req.user),
+    })
 })
 
 export const getPostComment = asyncHandler(async (req, res) => {
@@ -72,7 +74,7 @@ export const getPostComment = asyncHandler(async (req, res) => {
 
     res.json({
         count: comments.length,
-        comments: comments.map((comment) => parseComment(comment)),
+        comments: comments.map((comment) => parseComment(comment, req.user)),
     })
 })
 
@@ -95,7 +97,9 @@ export const updatePost = asyncHandler(async (req, res) => {
 
     await post.save()
 
-    res.json({ post })
+    res.json({
+        post: parsePost(post, req.user),
+    })
 })
 
 export const deletePost = asyncHandler(async (req, res) => {
@@ -139,7 +143,9 @@ export const likePost = asyncHandler(async (req, res) => {
 
     await post.save()
 
-    res.json({ post })
+    res.json({
+        post: parsePost(post, req.user),
+    })
 })
 
 export const unlikePost = asyncHandler(async (req, res) => {
@@ -163,7 +169,9 @@ export const unlikePost = asyncHandler(async (req, res) => {
 
     await post.save()
 
-    res.json({ post })
+    res.json({
+        post: parsePost(post, req.user),
+    })
 })
 
 export const commentOnPost = asyncHandler(async (req, res) => {
@@ -186,7 +194,55 @@ export const commentOnPost = asyncHandler(async (req, res) => {
 
     await post.save()
 
-    res.json({ post })
+    res.json({
+        comment: parseComment(comment, req.user),
+    })
+})
+
+export const savePost = asyncHandler(async (req, res) => {
+    const post = await Post.findById(req.params.id)
+
+    if (!post) {
+        res.status(404)
+        throw new Error('Post not found')
+    }
+
+    const user = req.user
+
+    if (user.savedPosts.includes(post._id)) {
+        res.status(400)
+        throw new Error('Already saved')
+    }
+
+    user.savedPosts.push(post._id)
+
+    await user.save()
+
+    res.json({ message: 'Post saved' })
+})
+
+export const unsavePost = asyncHandler(async (req, res) => {
+    const post = await Post.findById(req.params.id)
+
+    if (!post) {
+        res.status(404)
+        throw new Error('Post not found')
+    }
+
+    const user = req.user
+
+    if (!user.savedPosts.includes(post._id)) {
+        res.status(400)
+        throw new Error('Not saved yet')
+    }
+
+    user.savedPosts = user.savedPosts.filter(
+        (savedPost) => savedPost.toString() !== post._id.toString()
+    )
+
+    await user.save()
+
+    res.json({ message: 'Post unsaved' })
 })
 
 export const getPostForFeed = asyncHandler(async (req, res) => {
@@ -209,7 +265,7 @@ export const getPostForFeed = asyncHandler(async (req, res) => {
         .populate('user', 'name username avatar')
 
     res.json({
-        posts: posts.map((post) => parsePost(post)),
+        posts: posts.map((post) => parsePost(post, req.user)),
         count: posts.length,
     })
 })

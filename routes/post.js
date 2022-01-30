@@ -8,7 +8,9 @@ import {
     getPostForFeed,
     getSiglePost,
     likePost,
+    savePost,
     unlikePost,
+    unsavePost,
     updatePost,
 } from '../controllers/post.js'
 import { userMiddleware } from '../middlewares/auth.js'
@@ -48,6 +50,10 @@ router.delete('/:id', validateParamsId('id'), deletePost)
 router.post('/:id/like', validateParamsId('id'), likePost)
 
 router.post('/:id/unlike', validateParamsId('id'), unlikePost)
+
+router.post('/:id/save', validateParamsId('id'), savePost)
+
+router.post('/:id/unsave', validateParamsId('id'), unsavePost)
 
 router.post(
     '/:id/comment',

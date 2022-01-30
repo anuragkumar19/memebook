@@ -5,6 +5,7 @@ import {
     getFollowing,
     getLoggedInUser,
     getPostOfUser,
+    getSavedPosts,
     getUserByUsername,
     searchUser,
     unfollow,
@@ -33,6 +34,8 @@ router.use(userMiddleware)
 router.get('/', getLoggedInUser)
 
 router.get('/search', searchUser)
+
+router.get('/saved', getSavedPosts)
 
 router.put('/bio', validate(updateBioSchema), updateBio)
 

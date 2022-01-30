@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler'
 import Comment from '../models/Comment.js'
 import Post from '../models/Post.js'
+import { parseComment } from '../utils/parser.js'
 
 export const updateComment = asyncHandler(async (req, res) => {
     const { id } = req.params
@@ -23,7 +24,9 @@ export const updateComment = asyncHandler(async (req, res) => {
 
     await comment.save()
 
-    res.json({ comment })
+    res.json({
+        comment: parseComment(comment, req.user),
+    })
 })
 
 export const deleteComment = asyncHandler(async (req, res) => {
@@ -80,7 +83,7 @@ export const likeComment = asyncHandler(async (req, res) => {
 
     await comment.save()
 
-    res.json({ comment })
+    res.json({ comment: parseComment(comment, req.user) })
 })
 
 export const unlikeComment = asyncHandler(async (req, res) => {
@@ -106,5 +109,5 @@ export const unlikeComment = asyncHandler(async (req, res) => {
 
     await comment.save()
 
-    res.json({ comment })
+    res.json({ comment: parseComment(comment, req.user) })
 })

@@ -1,10 +1,27 @@
 import Joi from 'joi'
 
+const usernameValidator = (value, helpers) => {
+    if (/^[a-zA-Z0-9._]+$/.test(value)) {
+        return helpers.error('any.custom', {
+            message:
+                'Username must contain only letters, numbers, periods, and underscores.',
+        })
+    }
+
+    return value
+}
+
 export const signUpSchema = Joi.object({
     name: Joi.string().trim().required().min(3).max(40),
     email: Joi.string().required().email().lowercase(),
     password: Joi.string().required().min(6),
-    username: Joi.string().required().min(3).max(40).alphanum().lowercase(),
+    username: Joi.string()
+        .required()
+        .min(3)
+        .max(40)
+        .lowercase()
+        .custom(usernameValidator)
+        .invalid('admin', 'memebook', 'search', 'saved'),
 })
 
 export const verifyEmailSchema = Joi.object({
@@ -40,7 +57,14 @@ export const updateNameSchema = Joi.object({
 })
 
 export const updateUsernameSchema = Joi.object({
-    username: Joi.string().trim().required().min(3).max(40).alphanum(),
+    username: Joi.string()
+        .trim()
+        .required()
+        .min(3)
+        .max(40)
+        .lowercase()
+        .custom(usernameValidator)
+        .invalid('admin', 'memebook', 'search', 'saved'),
 })
 
 export const updatePasswordSchema = Joi.object({

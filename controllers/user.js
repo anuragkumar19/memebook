@@ -157,7 +157,7 @@ export const getPostOfUser = asyncHandler(async (req, res) => {
     }
 
     if (!limit) {
-        limit = 6
+        limit = 10
     }
 
     const posts = await Post.find({
@@ -168,10 +168,8 @@ export const getPostOfUser = asyncHandler(async (req, res) => {
         .limit(limit)
         .sort('-createdAt')
 
-    const sendablePosts = posts.map((post) => parsePost(post))
-
     res.status(200).json({
-        posts: sendablePosts,
+        posts: posts.map((post) => parsePost(post, req.user)),
     })
 })
 
@@ -218,6 +216,14 @@ export const getFollowing = asyncHandler(async (req, res) => {
 
     res.status(200).json({
         following: user.following,
+    })
+})
+
+export const getSavedPosts = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id).populate('savedPosts')
+
+    res.status(200).json({
+        savedPosts: user.savedPosts.map((post) => parsePost(post, req.user)),
     })
 })
 
