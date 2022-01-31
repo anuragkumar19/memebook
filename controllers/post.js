@@ -34,7 +34,10 @@ export const createPostWithVideo = asyncHandler(async (req, res) => {
 })
 
 export const getSiglePost = asyncHandler(async (req, res) => {
-    const post = await Post.findById(req.params.id)
+    const post = await Post.findById(req.params.id).populate(
+        'user',
+        'name username avatar'
+    )
 
     if (!post) {
         res.status(404)
