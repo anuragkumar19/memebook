@@ -220,10 +220,26 @@ export const getFollowing = asyncHandler(async (req, res) => {
 })
 
 export const getSavedPosts = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id).populate('savedPosts')
+    let { page, limit } = req.query
+
+    if (!page) {
+        page = 1
+    }
+
+    if (!limit) {
+        limit = 10
+    }
+
+    const posts = await Post.find({
+        _id: { $in: req.user.savedPosts },
+    })
+        .populate('user', 'name username avatar')
+        .sort('-createdAt')
+        .skip((page - 1) * limit)
+        .limit(limit)
 
     res.status(200).json({
-        savedPosts: user.savedPosts.map((post) => parsePost(post, req.user)),
+        savedPosts: posts.map((post) => parsePost(post, req.user)),
     })
 })
 
@@ -307,11 +323,21 @@ export const unfollow = asyncHandler(async (req, res) => {
 })
 
 export const searchUser = asyncHandler(async (req, res) => {
-    const { q } = req.query
+    let { q, page, limit } = req.query
+
+    q = q.trim()
 
     if (!q) {
         res.status(400)
         throw new Error('Query is required')
+    }
+
+    if (!page) {
+        page = 1
+    }
+
+    if (!limit) {
+        limit = 10
     }
 
     const users = await User.find({
@@ -320,8 +346,10 @@ export const searchUser = asyncHandler(async (req, res) => {
             { name: { $regex: q, $options: 'i' }, isEmailVerified: true },
         ],
     })
+        .sort('-createdAt')
+        .skip((page - 1) * limit)
+        .limit(limit)
         .select('name username avatar')
-        .limit(10)
 
     res.status(200).json({
         users,
