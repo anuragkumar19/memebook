@@ -198,7 +198,14 @@ export const commentOnPost = asyncHandler(async (req, res) => {
     await post.save()
 
     res.json({
-        comment: parseComment(comment, req.user),
+        comment: {
+            ...parseComment(comment, req.user),
+            user: {
+                name: req.user.name,
+                username: req.user.username,
+                avatar: req.user.avatar,
+            },
+        },
     })
 })
 
