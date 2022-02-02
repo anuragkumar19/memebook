@@ -1,7 +1,7 @@
 import Joi from 'joi'
 
 const usernameValidator = (value, helpers) => {
-    if (/^[a-zA-Z0-9._]+$/.test(value)) {
+    if (!/^[a-zA-Z0-9._]+$/.test(value)) {
         return helpers.error('any.custom', {
             message:
                 'Username must contain only letters, numbers, periods, and underscores.',
