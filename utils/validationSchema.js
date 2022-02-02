@@ -45,11 +45,11 @@ export const resetPasswordSchema = Joi.object({
 })
 
 export const updateBioSchema = Joi.object({
-    bio: Joi.string().trim().max(200),
+    bio: Joi.string().trim().max(200).allow(''),
 })
 
 export const updateWebsiteSchema = Joi.object({
-    website: Joi.string().trim().uri(),
+    website: Joi.string().trim().uri().allow(''),
 })
 
 export const updateNameSchema = Joi.object({
@@ -73,7 +73,7 @@ export const updatePasswordSchema = Joi.object({
 })
 
 export const postSchema = Joi.object({
-    caption: Joi.string().trim(),
+    caption: Joi.string().trim().allow(''),
 })
 
 export const commentSchema = Joi.object({
