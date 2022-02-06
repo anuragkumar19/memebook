@@ -15,27 +15,34 @@ const NotificationSchema = new mongoose.Schema(
         post: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Post',
-            required: () =>
-                this.type === 'likePost' ||
-                this.type === 'likeComment' ||
-                this.type === 'comment',
+            required() {
+                return (
+                    this.type === 'likePost' ||
+                    this.type === 'likeComment' ||
+                    this.type === 'comment'
+                )
+            },
         },
         comment: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Comment',
-            required: () =>
-                this.type === 'likeComment' || this.type === 'comment',
+            required() {
+                return this.type === 'likeComment' || this.type === 'comment'
+            },
         },
         followedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
-            required: () => this.type === 'follow',
+            required() {
+                return this.type === 'follow'
+            },
         },
         likedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
-            required: () =>
-                this.type === 'likePost' || this.type === 'likeComment',
+            required() {
+                return this.type === 'likePost' || this.type === 'likeComment'
+            },
         },
         seen: {
             type: Boolean,
