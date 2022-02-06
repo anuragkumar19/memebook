@@ -1,10 +1,11 @@
+import { RequestHandler } from 'express'
 import asyncHandler from 'express-async-handler'
 import jwt from 'jsonwebtoken'
-import User from '../models/User.js'
-import { sendOtp } from '../utils/email.js'
-import { genOtp } from '../utils/genOtp.js'
+import User from '../models/User'
+import { sendOtp } from '../utils/email'
+import { genOtp } from '../utils/genOtp'
 
-export const signUp = asyncHandler(async (req, res) => {
+export const signUp: RequestHandler = asyncHandler(async (req, res) => {
     const { name, username, email, password } = req.body
 
     let user = await User.findOne({ email })
@@ -47,7 +48,7 @@ export const signUp = asyncHandler(async (req, res) => {
     res.json({ message: 'Signup successful' })
 })
 
-export const verifyEmail = asyncHandler(async (req, res) => {
+export const verifyEmail: RequestHandler = asyncHandler(async (req, res) => {
     const { email, otp } = req.body
 
     const user = await User.findOne({ email })
@@ -62,7 +63,7 @@ export const verifyEmail = asyncHandler(async (req, res) => {
         throw new Error('Email already verified')
     }
 
-    if (!user.otp || user.otpExpiry < Date.now()) {
+    if (!user.otp || user.otpExpiry! < Date.now()) {
         res.status(400)
         throw new Error('OTP expired')
     }
@@ -73,14 +74,14 @@ export const verifyEmail = asyncHandler(async (req, res) => {
     }
 
     user.isEmailVerified = true
-    user.otp = null
-    user.otpExpiry = null
+    user.otp = undefined
+    user.otpExpiry = undefined
     await user.save()
 
     res.json({ message: 'Email verified' })
 })
 
-export const logIn = asyncHandler(async (req, res) => {
+export const logIn: RequestHandler = asyncHandler(async (req, res) => {
     const { email, password } = req.body
 
     const user = await User.findOne({ email })
@@ -104,7 +105,7 @@ export const logIn = asyncHandler(async (req, res) => {
     }
 })
 
-export const refreshToken = asyncHandler(async (req, res) => {
+export const refreshToken: RequestHandler = asyncHandler(async (req, res) => {
     const token = req.body.refreshToken
 
     if (!token) {
@@ -123,7 +124,10 @@ export const refreshToken = asyncHandler(async (req, res) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET)
+        const decoded = jwt.verify(
+            token,
+            process.env.REFRESH_TOKEN_SECRET
+        ) as jwt.JwtPayload
         const user = await User.findById(decoded._id)
 
         if (!user) {
@@ -140,7 +144,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
     }
 })
 
-export const forgotPassword = asyncHandler(async (req, res) => {
+export const forgotPassword: RequestHandler = asyncHandler(async (req, res) => {
     const { email } = req.body
 
     const user = await User.findOne({ email })
@@ -167,7 +171,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     res.json({ message: 'OTP sent' })
 })
 
-export const resetPassword = asyncHandler(async (req, res) => {
+export const resetPassword: RequestHandler = asyncHandler(async (req, res) => {
     const { email, otp, password } = req.body
 
     const user = await User.findOne({ email })
@@ -182,7 +186,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
         throw new Error('Email not verified')
     }
 
-    if (!user.otp || user.otpExpiry < Date.now()) {
+    if (!user.otp || user.otpExpiry! < Date.now()) {
         res.status(400)
         throw new Error('OTP expired')
     }
@@ -193,8 +197,8 @@ export const resetPassword = asyncHandler(async (req, res) => {
     }
 
     user.password = password
-    user.otp = null
-    user.otpExpiry = null
+    user.otp = undefined
+    user.otpExpiry = undefined
     await user.save()
 
     res.json({ message: 'Password reset successful' })

@@ -1,7 +1,8 @@
 import asyncHandler from 'express-async-handler'
-import Comment from '../models/Comment.js'
-import Post from '../models/Post.js'
-import { parseComment } from '../utils/parser.js'
+import { ObjectId } from 'mongoose'
+import Comment from '../models/Comment'
+import Post from '../models/Post'
+import { parseComment } from '../utils/parser'
 
 export const updateComment = asyncHandler(async (req, res) => {
     const { id } = req.params

@@ -1,8 +1,9 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { UserDocument, UserModel, UserSchema } from '../interfaces/mongoose.gen'
 
-const UserSchema = new mongoose.Schema(
+const UserSchema: UserSchema = new mongoose.Schema(
     {
         name: {
             type: String,
@@ -77,7 +78,7 @@ UserSchema.pre('save', function (next) {
     next()
 })
 
-UserSchema.methods.comparePassword = function (candidatePassword) {
+UserSchema.methods.comparePassword = function (candidatePassword: string) {
     return bcrypt.compareSync(candidatePassword, this.password)
 }
 
@@ -107,6 +108,9 @@ UserSchema.methods.generateAccessToken = function () {
     return accessToken
 }
 
-const User = mongoose.model('User', UserSchema)
+const User: UserModel = mongoose.model<UserDocument, UserModel>(
+    'User',
+    UserSchema
+)
 
 export default User

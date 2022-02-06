@@ -1,10 +1,10 @@
 import asyncHandler from 'express-async-handler'
-import Comment from '../models/Comment.js'
-import Post from '../models/Post.js'
-import { parseComment, parsePost } from '../utils/parser.js'
+import Comment from '../models/Comment'
+import Post from '../models/Post'
+import { parseComment, parsePost } from '../utils/parser'
 
 export const createPostWithImage = asyncHandler(async (req, res) => {
-    const images = req.files.map((file) => file.path)
+    const images = req.files!.map((file) => file.path)
 
     const { caption } = req.body
 

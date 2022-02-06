@@ -13,11 +13,11 @@ import {
     unsavePost,
     updatePost,
 } from '../controllers/post.js'
-import { userMiddleware } from '../middlewares/auth.js'
-import { upload } from '../middlewares/upload.js'
-import validate from '../middlewares/validate.js'
-import { validateParamsId } from '../middlewares/validateId.js'
-import { commentSchema, postSchema } from '../utils/validationSchema.js'
+import { userMiddleware } from '../middlewares/auth'
+import { upload } from '../middlewares/upload'
+import validate from '../middlewares/validate'
+import { validateParamsId } from '../middlewares/validateId'
+import { commentSchema, postSchema } from '../utils/validationSchema'
 
 const router = Router()
 

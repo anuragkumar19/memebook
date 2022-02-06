@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
+import { PostDocument, PostModel, PostSchema } from '../interfaces/mongoose.gen'
 
-const PostSchema = new mongoose.Schema(
+const PostSchema: PostSchema = new mongoose.Schema(
     {
         user: {
             type: mongoose.Schema.Types.ObjectId,
@@ -34,4 +35,9 @@ const PostSchema = new mongoose.Schema(
     { timestamps: true }
 )
 
-export default mongoose.model('Post', PostSchema)
+const Post: PostModel = mongoose.model<PostDocument, PostModel>(
+    'Post',
+    PostSchema
+)
+
+export default Post

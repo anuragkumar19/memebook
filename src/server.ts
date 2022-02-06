@@ -3,10 +3,10 @@ import cors from 'cors'
 import chalk from 'chalk'
 import 'dotenv/config'
 import morgan from 'morgan'
-import router from './routes/index.js'
-import { __prod__ } from './constants.js'
-import { connectDB } from './config/db.js'
-import { errorHandler, notFound } from './middlewares/errors.js'
+import router from './routes/index'
+import { __prod__ } from './constants'
+import { connectDB } from './config/db'
+import { errorHandler, notFound } from './middlewares/errors'
 
 const app = express()
 

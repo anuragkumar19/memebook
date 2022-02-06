@@ -1,6 +1,11 @@
 import mongoose from 'mongoose'
+import {
+    CommentDocument,
+    CommentModel,
+    CommentSchema,
+} from '../interfaces/mongoose.gen'
 
-const CommentSchema = new mongoose.Schema(
+const CommentSchema: CommentSchema = new mongoose.Schema(
     {
         user: {
             type: mongoose.Schema.Types.ObjectId,
@@ -26,4 +31,9 @@ const CommentSchema = new mongoose.Schema(
     { timestamps: true }
 )
 
-export default mongoose.model('Comment', CommentSchema)
+const Comment: CommentModel = mongoose.model<CommentDocument, CommentModel>(
+    'Comment',
+    CommentSchema
+)
+
+export default Comment
