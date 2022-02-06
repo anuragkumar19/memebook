@@ -26,4 +26,12 @@ const CommentSchema = new mongoose.Schema(
     { timestamps: true }
 )
 
+CommentSchema.pre('remove', async function (next) {
+    await Notification.deleteMany({
+        comment: this._id,
+    })
+
+    next()
+})
+
 export default mongoose.model('Comment', CommentSchema)

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import Notification from './Notification.js'
 
 const PostSchema = new mongoose.Schema(
     {
@@ -33,5 +34,13 @@ const PostSchema = new mongoose.Schema(
     },
     { timestamps: true }
 )
+
+PostSchema.pre('remove', async function (next) {
+    await Notification.deleteMany({
+        post: this._id,
+    })
+
+    next()
+})
 
 export default mongoose.model('Post', PostSchema)

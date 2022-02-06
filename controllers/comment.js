@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler'
 import Comment from '../models/Comment.js'
+import Notification from '../models/Notification.js'
 import Post from '../models/Post.js'
 import { parseComment } from '../utils/parser.js'
 
@@ -79,6 +80,16 @@ export const likeComment = asyncHandler(async (req, res) => {
         throw new Error('Already liked')
     }
 
+    if (comment.user.toString() !== user.toString()) {
+        await Notification.create({
+            type: 'likeComment',
+            user: comment.user,
+            post: comment.post,
+            comment: comment._id,
+            likedBy: user,
+        })
+    }
+
     comment.likes.push(user)
 
     await comment.save()
@@ -106,6 +117,16 @@ export const unlikeComment = asyncHandler(async (req, res) => {
     comment.likes = comment.likes.filter(
         (like) => like.toString() !== user.toString()
     )
+
+    if (comment.user.toString() !== user.toString()) {
+        await Notification.findOneAndDelete({
+            type: 'likeComment',
+            user: comment.user,
+            post: comment.post,
+            comment: comment._id,
+            likedBy: user,
+        })
+    }
 
     await comment.save()
 
