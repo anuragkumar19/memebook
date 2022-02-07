@@ -12,17 +12,26 @@ export const getNotifications = asyncHandler(async (req, res) => {
         limit = 10
     }
 
-    const notifications = await Notification.find({
+    let notifications = await Notification.find({
         user: req.user._id,
     })
         .populate('followedBy', 'name username avatar')
         .populate('post', 'caption mediaType media user')
-        .populate('post.user', 'name username avatar')
         .populate('comment', 'text user')
-        .populate('comment.user', 'name username avatar')
         .skip((page - 1) * limit)
         .limit(limit)
         .sort('-createdAt')
+
+    notifications = await Notification.populate(notifications, [
+        {
+            path: 'post.user',
+            select: 'name username avatar',
+        },
+        {
+            path: 'comment.user',
+            select: 'name username avatar',
+        },
+    ])
 
     res.json({ notifications })
 })
