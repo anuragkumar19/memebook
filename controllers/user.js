@@ -1,4 +1,5 @@
 import asyncHandler from 'express-async-handler'
+import Notification from '../models/Notification.js'
 import Post from '../models/Post.js'
 import User from '../models/User.js'
 import { parsePost, parseUser } from '../utils/parser.js'
@@ -276,6 +277,12 @@ export const follow = asyncHandler(async (req, res) => {
 
     user.followers.push(follower._id)
 
+    await Notification.create({
+        user: user._id,
+        followedBy: follower._id,
+        type: 'follow',
+    })
+
     await user.save()
 
     res.status(200).json({
@@ -314,6 +321,12 @@ export const unfollow = asyncHandler(async (req, res) => {
     user.followers = user.followers.filter(
         (followerId) => !followerId.equals(follower._id)
     )
+
+    await Notification.findOneAndDelete({
+        user: user._id,
+        followedBy: follower._id,
+        type: 'follow',
+    })
 
     await user.save()
 

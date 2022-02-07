@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler'
 import Comment from '../models/Comment.js'
+import Notification from '../models/Notification.js'
 import Post from '../models/Post.js'
 import { parseComment, parsePost } from '../utils/parser.js'
 
@@ -144,6 +145,15 @@ export const likePost = asyncHandler(async (req, res) => {
 
     post.likes.push(user)
 
+    if (post.user.toString() !== user.toString()) {
+        await Notification.create({
+            type: 'likePost',
+            user: post.user,
+            post: post._id,
+            likedBy: user,
+        })
+    }
+
     await post.save()
 
     res.json({
@@ -170,6 +180,15 @@ export const unlikePost = asyncHandler(async (req, res) => {
         (like) => like.toString() !== user.toString()
     )
 
+    if (post.user.toString() !== user.toString()) {
+        await Notification.findOneAndDelete({
+            type: 'likePost',
+            user: post.user,
+            post: post._id,
+            likedBy: user,
+        })
+    }
+
     await post.save()
 
     res.json({
@@ -194,6 +213,15 @@ export const commentOnPost = asyncHandler(async (req, res) => {
     })
 
     post.comments.push(comment._id)
+
+    if (post.user.toString() !== req.user._id.toString()) {
+        await Notification.create({
+            type: 'comment',
+            user: post.user,
+            post: post._id,
+            comment: comment._id,
+        })
+    }
 
     await post.save()
 

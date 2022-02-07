@@ -3,6 +3,7 @@ import authRouter from './auth.js'
 import commentRouter from './comment.js'
 import postRouter from './post.js'
 import userRouter from './user.js'
+import notificationRouter from './notification.js'
 
 const router = Router()
 
@@ -17,6 +18,9 @@ router.use('/post', postRouter)
 
 // Comment Router
 router.use('/comment', commentRouter)
+
+// Notification Router
+router.use('/notification', notificationRouter)
 
 router.get('/', (_req, res) => res.json({ message: 'API is running!' }))
 

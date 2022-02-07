@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import Notification from './Notification.js'
 
 const CommentSchema = new mongoose.Schema(
     {
@@ -25,5 +26,13 @@ const CommentSchema = new mongoose.Schema(
     },
     { timestamps: true }
 )
+
+CommentSchema.pre('remove', async function (next) {
+    await Notification.deleteMany({
+        comment: this._id,
+    })
+
+    next()
+})
 
 export default mongoose.model('Comment', CommentSchema)
