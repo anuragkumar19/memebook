@@ -63,6 +63,8 @@ NotificationSchema.post('save', async function (doc) {
     await doc.populate('post', 'caption mediaType media user')
     await doc.populate('comment', 'text user')
     await doc.populate('likedBy', 'name username avatar')
+    await doc.populate('post.user', 'name username avatar')
+    await doc.populate('comment.user', 'name username avatar')
 
     subs.forEach(async (sub) => {
         const payload = {
