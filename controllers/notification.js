@@ -15,7 +15,7 @@ export const getNotifications = asyncHandler(async (req, res) => {
     const notifications = await Notification.find({
         user: req.user._id,
     })
-        .populate('follwedBy', 'name username avatar')
+        .populate('followedBy', 'name username avatar')
         .populate('post', 'caption mediaType media user')
         .populate('post.user', 'name username avatar')
         .populate('comment', 'text user')

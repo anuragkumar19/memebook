@@ -2,7 +2,7 @@ import { Router } from 'express'
 import {
     getNotifications,
     markNotificationAsSeen,
-} from '../controllers/notifications.js'
+} from '../controllers/notification.js'
 import { validateParamsId } from '../middlewares/validateId.js'
 import { userMiddleware } from '../middlewares/auth.js'
 
