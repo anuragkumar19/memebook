@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import Notification from './Notification.js'
 
 const CommentSchema = new mongoose.Schema(
     {
