@@ -18,6 +18,7 @@ export const getNotifications = asyncHandler(async (req, res) => {
         .populate('followedBy', 'name username avatar')
         .populate('post', 'caption mediaType media user')
         .populate('comment', 'text user')
+        .populate('likedBy', 'name username avatar')
         .skip((page - 1) * limit)
         .limit(limit)
         .sort('-createdAt')
