@@ -1,4 +1,6 @@
 import mongoose from 'mongoose'
+import webPush from 'web-push'
+import Subscription from './Subscription.js'
 
 const NotificationSchema = new mongoose.Schema(
     {
@@ -53,5 +55,31 @@ const NotificationSchema = new mongoose.Schema(
         timestamps: true,
     }
 )
+
+NotificationSchema.post('save', async function (doc) {
+    const subs = await Subscription.find({ user: doc.user })
+
+    subs.forEach(async (sub) => {
+        const payload = {
+            type: doc.type,
+            user: doc.user,
+            post: doc.post,
+            comment: doc.comment,
+            followedBy: doc.followedBy,
+            likedBy: doc.likedBy,
+            _id: doc._id,
+            createdAt: doc.createdAt,
+        }
+
+        try {
+            await webPush.sendNotification(
+                sub.subscription,
+                JSON.stringify(payload)
+            )
+        } catch (err) {
+            //...
+        }
+    })
+})
 
 export default mongoose.model('Notification', NotificationSchema)
