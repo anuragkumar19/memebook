@@ -55,3 +55,12 @@ export const markNotificationAsSeen = asyncHandler(async (req, res) => {
 
     res.json({ notification })
 })
+
+export const getUnseenNotifications = asyncHandler(async (req, res) => {
+    const count = await Notification.countDocuments({
+        user: req.user._id,
+        seen: false,
+    })
+
+    res.json({ count })
+})
