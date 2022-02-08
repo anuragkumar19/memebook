@@ -47,6 +47,6 @@ export const socketHandler = (socket) => {
         ])
 
         socket.to(to).emit('message', message)
-        socket.to(socket.user._id.toString()).emit('message', message)
+        socket.emit('message', message)
     })
 }

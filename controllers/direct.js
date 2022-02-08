@@ -19,8 +19,12 @@ export const getChatUsers = asyncHandler(async (req, res) => {
         return acc
     }, [])
 
-    const usersData = await User.find({ _id: { $in: users } }).select(
+    let usersData = await User.find({ _id: { $in: users } }).select(
         'name username avatar'
+    )
+
+    usersData = usersData.filter(
+        (user) => user._id.toString() !== req.user._id.toString()
     )
 
     res.status(200).json({
@@ -30,7 +34,10 @@ export const getChatUsers = asyncHandler(async (req, res) => {
             avatar: user.avatar,
             _id: user._id,
             lastMessage: messages.find((message) => {
-                if (message.to.toString() === user._id.toString()) {
+                if (
+                    message.from.toString() === user._id.toString() ||
+                    message.to.toString() === user._id.toString()
+                ) {
                     return message
                 }
 
@@ -40,18 +47,20 @@ export const getChatUsers = asyncHandler(async (req, res) => {
     })
 })
 
+export const getUnSeenMessages = asyncHandler(async (req, res) => {
+    const messages = await Message.find({ to: req.user._id, seen: false })
+
+    let users = messages.map((message) => message.from.toString())
+
+    users = [...new Set(users)]
+
+    res.json({
+        count: users.length,
+    })
+})
+
 export const getMessages = asyncHandler(async (req, res) => {
     const { id } = req.params
-
-    let { limit, page } = req.query
-
-    if (!limit) {
-        limit = 20
-    }
-
-    if (!page) {
-        page = 1
-    }
 
     const messages = await Message.find({
         $or: [
@@ -59,13 +68,24 @@ export const getMessages = asyncHandler(async (req, res) => {
             { from: req.user._id, to: id },
         ],
     })
-        .sort('-createdAt')
-        .skip((page - 1) * limit)
-        .limit(limit)
+        .sort('+createdAt')
         .populate('from', 'name username avatar')
         .populate('to', 'name username avatar')
 
     res.status(200).json({
         messages,
+    })
+})
+
+export const markAsSeen = asyncHandler(async (req, res) => {
+    const { id } = req.params
+
+    await Message.updateMany(
+        { to: req.user._id, from: id, seen: false },
+        { $set: { seen: true } }
+    )
+
+    res.status(200).json({
+        message: 'Messages marked as seen',
     })
 })
