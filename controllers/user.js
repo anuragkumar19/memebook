@@ -1,8 +1,9 @@
 import asyncHandler from 'express-async-handler'
 import Notification from '../models/Notification.js'
 import Post from '../models/Post.js'
+import Story from '../models/Story.js'
 import User from '../models/User.js'
-import { parsePost, parseUser } from '../utils/parser.js'
+import { parsePost, parseStory, parseUser } from '../utils/parser.js'
 
 export const getLoggedInUser = asyncHandler(async (req, res) => {
     const user = req.user
@@ -171,6 +172,32 @@ export const getPostOfUser = asyncHandler(async (req, res) => {
 
     res.status(200).json({
         posts: posts.map((post) => parsePost(post, req.user)),
+    })
+})
+
+export const getStoryOfUser = asyncHandler(async (req, res) => {
+    const { username } = req.params
+
+    const user = await User.findOne({ username })
+
+    if (!user) {
+        res.status(404)
+        throw new Error('User not found')
+    }
+
+    if (!user.isEmailVerified) {
+        res.status(404)
+        throw new Error('User not found')
+    }
+
+    const stories = await Story.find({
+        user: user._id,
+        // Less than 24 hours
+        createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+    })
+
+    res.status(200).json({
+        stories: stories.map((story) => parseStory(story, req.user)),
     })
 })
 

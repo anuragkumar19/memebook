@@ -6,6 +6,7 @@ import {
     getLoggedInUser,
     getPostOfUser,
     getSavedPosts,
+    getStoryOfUser,
     getUserByUsername,
     searchUser,
     unfollow,
@@ -52,6 +53,8 @@ router.put('/avatar', upload('image', 'avatar', false), updateAvatar)
 router.get('/:username', getUserByUsername)
 
 router.get('/:username/posts', getPostOfUser)
+
+router.get('/:username/stories', getStoryOfUser)
 
 router.get('/:username/followers', getFollowers)
 

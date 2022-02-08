@@ -41,3 +41,15 @@ export const parseComment = (comment, user) => {
         isLiked: comment.likes.includes(user._id),
     }
 }
+
+export const parseStory = (story, user) => {
+    return {
+        _id: story._id,
+        mediaType: story.mediaType,
+        media: story.media,
+        user: story.user,
+        createdAt: story.createdAt,
+        updatedAt: story.updatedAt,
+        seen: story.seenBy.includes(user._id),
+    }
+}
