@@ -4,6 +4,7 @@ import chalk from 'chalk'
 import 'dotenv/config'
 import http from 'http'
 import morgan from 'morgan'
+import webPush from 'web-push'
 import router from './routes/index.js'
 import { Server } from 'socket.io'
 import { __prod__ } from './constants.js'
@@ -28,6 +29,13 @@ io.on('connection', socketHandler)
 
 // Connect to database
 connectDB()
+
+// Set WebPush config
+webPush.setVapidDetails(
+    `mailto:${process.env.EMAIL}`,
+    process.env.PUBLIC_VAPID_KEY,
+    process.env.PRIVATE_VAPID_KEY
+)
 
 app.use(express.json())
 app.use(cors())
