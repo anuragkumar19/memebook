@@ -101,7 +101,12 @@ export const updatePassword = asyncHandler(async (req, res) => {
 export const updateAvatar = asyncHandler(async (req, res) => {
     const user = req.user
 
-    user.avatar = req.file.path
+    const path = req.file.path.replace(
+        'https://res.cloudinary.com/instavite/image/upload/',
+        'https://res.cloudinary.com/instavite/image/upload/c_scale,w_400/'
+    )
+
+    user.avatar = path
 
     await user.save()
 
