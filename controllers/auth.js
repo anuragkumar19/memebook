@@ -81,13 +81,19 @@ export const verifyEmail = asyncHandler(async (req, res) => {
 })
 
 export const logIn = asyncHandler(async (req, res) => {
-    const { email, password } = req.body
+    const { emailOrUsername, password } = req.body
 
-    const user = await User.findOne({ email })
+    let user
+
+    if (emailOrUsername.includes('@')) {
+        user = await User.findOne({ email: emailOrUsername })
+    } else {
+        user = await User.findOne({ username: emailOrUsername })
+    }
 
     if (!user) {
         res.status(400)
-        throw new Error('Email not found')
+        throw new Error('User not found with this email or username')
     }
 
     if (!user.isEmailVerified) {

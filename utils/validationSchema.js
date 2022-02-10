@@ -30,7 +30,7 @@ export const verifyEmailSchema = Joi.object({
 })
 
 export const loginSchema = Joi.object({
-    email: Joi.string().required().email().lowercase(),
+    emailOrUsername: Joi.string().trim().required().lowercase(),
     password: Joi.string().required(),
 })
 
