@@ -79,3 +79,8 @@ export const postSchema = Joi.object({
 export const commentSchema = Joi.object({
     text: Joi.string().trim().required().min(1).max(200),
 })
+
+export const subscribeSchema = Joi.object({
+    subscription: Joi.required(),
+    identifier: Joi.string().required(),
+})
