@@ -36,6 +36,7 @@
         "multer-storage-cloudinary": "^4.0.0",
         "nodemailer": "^6.7.2",
         "sentence-case": "^3.0.4",
+        "socket.io": "^4.4.1",
         "web-push": "^3.4.5"
     },
     "devDependencies": {

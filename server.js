@@ -2,14 +2,30 @@ import express from 'express'
 import cors from 'cors'
 import chalk from 'chalk'
 import 'dotenv/config'
+import http from 'http'
 import morgan from 'morgan'
 import webPush from 'web-push'
 import router from './routes/index.js'
+import { Server } from 'socket.io'
 import { __prod__ } from './constants.js'
 import { connectDB } from './config/db.js'
 import { errorHandler, notFound } from './middlewares/errors.js'
+import { socketMiddleware } from './middlewares/auth.js'
+import { socketHandler } from './controllers/socket.js'
 
 const app = express()
+
+const server = http.createServer(app)
+
+const io = new Server(server, {
+    cors: '*',
+})
+
+// Socket middleware
+io.use(socketMiddleware)
+
+// Socket handler
+io.on('connection', socketHandler)
 
 // Connect to database
 connectDB()
@@ -38,7 +54,7 @@ app.use(errorHandler)
 
 const PORT = process.env.PORT || 3000
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(
         chalk.cyan.bold.underline(
             `Server is running in ${process.env.NODE_ENV} mode on port ${PORT}`
