@@ -141,7 +141,6 @@ export const refreshToken = asyncHandler(async (req, res) => {
         res.json({ tokens: { accessToken } })
     } catch (err) {
         res.status(401)
-        console.log(err)
         throw new Error('Invalid token')
     }
 })
