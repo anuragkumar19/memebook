@@ -24,6 +24,8 @@ webPush.setVapidDetails(
 app.use(express.json())
 app.use(cors())
 
+app.disable('x-powered-by')
+
 // Logging
 !__prod__ && app.use(morgan('dev'))
 
