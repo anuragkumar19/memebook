@@ -3,6 +3,7 @@ import Notification from '../models/Notification.js'
 import Post from '../models/Post.js'
 import User from '../models/User.js'
 import { parsePost, parseUser } from '../utils/parser.js'
+import { formatImageUrl } from '../utils/image.js'
 
 export const getLoggedInUser = asyncHandler(async (req, res) => {
     const user = req.user
@@ -101,10 +102,7 @@ export const updatePassword = asyncHandler(async (req, res) => {
 export const updateAvatar = asyncHandler(async (req, res) => {
     const user = req.user
 
-    const path = req.file.path.replace(
-        'https://res.cloudinary.com/instavite/image/upload/',
-        'https://res.cloudinary.com/instavite/image/upload/c_scale,w_400/'
-    )
+    const path = formatImageUrl(req.file.path, 400)
 
     user.avatar = path
 

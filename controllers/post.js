@@ -3,9 +3,10 @@ import Comment from '../models/Comment.js'
 import Notification from '../models/Notification.js'
 import Post from '../models/Post.js'
 import { parseComment, parsePost } from '../utils/parser.js'
+import { formatImageUrl } from '../utils/image.js'
 
 export const createPostWithImage = asyncHandler(async (req, res) => {
-    const images = req.files.map((file) => file.path)
+    const images = req.files.map((file) => formatImageUrl(file.path, 1080))
 
     const { caption } = req.body
 
