@@ -5,7 +5,7 @@ import Post from '../models/Post.js'
 import { parseComment, parsePost } from '../utils/parser.js'
 
 export const createPostWithImage = asyncHandler(async (req, res) => {
-    const images = req.files.map((file) => file.path)
+    const images = req.files.map((file) => file.path.replace( 'https://res.cloudinary.com/instavite/image/upload/', 'https://res.cloudinary.com/instavite/image/upload/c_scale,w_1080/' ))
 
     const { caption } = req.body
 
