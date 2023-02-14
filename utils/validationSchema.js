@@ -14,7 +14,7 @@ const usernameValidator = (value, helpers) => {
 export const signUpSchema = Joi.object({
     name: Joi.string().trim().required().min(3).max(40),
     email: Joi.string().required().email().lowercase(),
-    password: Joi.string().required().min(6),
+    password: Joi.string().required().min(6),max(72,'utf8'),
     username: Joi.string()
         .required()
         .min(3)
