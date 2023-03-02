@@ -21,7 +21,7 @@
     "homepage": "https://github.com/anuragkumar19/memebook#readme",
     "dependencies": {
         "bcryptjs": "^2.4.3",
-        "chalk": "^5.1.2",
+        "chalk": "^5.2.0",
         "cloudinary": "^1.28.1",
         "cors": "^2.8.5",
         "dotenv": "^11.0.0",
